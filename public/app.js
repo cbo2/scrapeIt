@@ -5,27 +5,52 @@ $(document).on("click", "#home", () => {
 $(document).on("click", "#scrape-articles", () => {
     $.ajax({
         method: "GET",
-        url: "/scrape/"
+        url: "/doscrape/"
     })
         // With that done, add the note information to the page
         .then(function (data) {
             console.log(data);
             // TODO - put the articles on the UI allowing the user to select which to save
-            for (let i = 0; i < data.length; i++) {
-            // data.forEach(article => {
+            data.map((article, i) => {
+                let link = "http://reuters.com" + article.link;
                 $("#fresh-scraped-articles").append(
-                    '<span>' + data[i].title +
+                    '<span>' + article.title +
+                    '<a href=' + link + '>     Full Story</a>' +
                     // '<button type="button" class="btn btn-warning">Article Notes</button>' +
-                    '<button type="button" id=' + i + ' class="btn btn-success save-article float-right">Save Article</button>' + 
+                    '<button type="button" class="btn btn-success save-article float-right"' + 
+                    ' data-id=' + i + ' data-title="' + article.title + '" data-link="' + link +
+                    '">Save Article</button>' +
                     '<hr> </span>');
-            // });
-                }
+            });
         });
 });
 
 $(document).on("click", ".save-article", function () {
-    let buttonId = $(this).attr("id");
+    // $(document).on("click", ".save-article", () => {
+
+    // the user has selected to have this document saved.  Let's hit our route to get that done!
+    let buttonId = $(this).attr("data-id");
     console.log("button clicked with id: " + $("button").attr("type") + "       " + buttonId);
+    console.log("the title is: " + $(this).attr("data-title"));
+    console.log("the link is: " + $(this).attr("data-link"));
+    // Run a POST request to change the note, using what's entered in the inputs
+    $.ajax({
+        method: "POST",
+        url: "/savearticle/",
+        data: {
+            // Value taken from title input
+            title: $(this).attr("data-title"),
+            // Value taken from note textarea
+            link: $(this).attr("data-link")
+        }
+    })
+        // With that done
+        .then(function (data) {
+            // Log the response
+            console.log(data);
+            // Empty the notes section
+            $("#notes").empty();
+        });
 });
 
 
