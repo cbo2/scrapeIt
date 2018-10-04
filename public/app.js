@@ -11,17 +11,23 @@ $(document).on("click", "#scrape-articles", () => {
         .then(function (data) {
             console.log(data);
             // TODO - put the articles on the UI allowing the user to select which to save
-            data.forEach(article => {
+            for (let i = 0; i < data.length; i++) {
+            // data.forEach(article => {
                 $("#fresh-scraped-articles").append(
-                    '<a href=http://reuters.com/"' + article.link +
-                    '" class="list-group-item list-group-item-action active">' +
-                    article.title +
+                    '<span>' + data[i].title +
                     // '<button type="button" class="btn btn-warning">Article Notes</button>' +
-                    '<button type="button" class="btn btn-success float-right">Save Article</button>' +
-                    '</a>');
-            });
+                    '<button type="button" id=' + i + ' class="btn btn-success save-article float-right">Save Article</button>' + 
+                    '<hr> </span>');
+            // });
+                }
         });
 });
+
+$(document).on("click", ".save-article", function () {
+    let buttonId = $(this).attr("id");
+    console.log("button clicked with id: " + $("button").attr("type") + "       " + buttonId);
+});
+
 
 // Grab the articles as a json
 $.getJSON("/articles", function (data) {
