@@ -1,3 +1,7 @@
+$(document).on("click", "#home", () => {
+    $("#fresh-scraped-articles").empty();
+});
+
 $(document).on("click", "#scrape-articles", () => {
     $.ajax({
         method: "GET",
