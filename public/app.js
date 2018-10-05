@@ -179,12 +179,18 @@ $(document).on("click", "#note-modal-save", function () {
     var thisArticleId = $(this).attr("data-id");
     console.log("=======> modal save was clicked with data-id=" + thisArticleId);
 
+    // first check if the data provided as a note is valid
+    if ($("#note-text").val().length <= 0) {
+        // no real note given, just refresh the modal
+        showNotes(thisArticleId);
+        return;
+    }
     // Run a POST request to change the note, using what's entered in the inputs
     $.ajax({
         method: "POST",
         url: "/articles/" + thisArticleId,
         data: {
-            // Value taken from title input
+            // Value taken from input
             comment: $("#note-text").val(),
         }
     })

@@ -103,6 +103,9 @@ module.exports = function (app) {
 
     // Route for deleting an article
     app.delete("/articles/:id", function (req, res) {
+
+        // TODO - for data integrity, need to cascade removal to Notes
+
         // Create a new note and pass the req.body to the entry
         db.Article.remove({ _id: req.params.id })
             .then(function (dbArticle) {
