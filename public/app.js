@@ -11,7 +11,7 @@ $(document).on("click", "#scrape-articles", () => {
         // With that done, add the note information to the page
         .then(function (data) {
             console.log(data);
-            // TODO - put the articles on the UI allowing the user to select which to save
+            // put the articles on the UI allowing the user to select which to save
             data.map((article, i) => {
                 let link = "http://reuters.com" + article.link;
                 $("#article-area").append(
@@ -27,8 +27,6 @@ $(document).on("click", "#scrape-articles", () => {
 });
 
 $(document).on("click", ".save-article", function () {
-    // $(document).on("click", ".save-article", () => {
-
     // the user has selected to have this document saved.  Let's hit our route to get that done!
     let buttonId = $(this).attr("data-id");
     $(this).addClass("disabled");  // disable the button since it has been used/saved
@@ -145,16 +143,23 @@ function showSavedArticles() {
                     '">Delete From Saved</button>' +
                     '<button type="button" class="btn btn-warning article-notes float-right"' +
                     ' data-id=' + article._id + ' data-title="' + article.title + '" data-link="' + article.link +
-                    '">Article Notes</button>' +
+                    '" data-toggle="modal" data-target="#NoteModalCenter">Article Notes</button>' +
                     '<hr> </span>');
             });
         });
 }
 
+$(document).on("click", ".article-notes", function () {
+    console.log("the button was pressed to enter article notes");
+    $("#note-modal-save").attr("data-id", $(this).attr("data-id"));
+});
+
+
 // When you click the savenote button
-$(document).on("click", "#savenote", function () {
+$(document).on("click", "#note-modal-save", function () {
     // Grab the id associated with the article from the submit button
     var thisId = $(this).attr("data-id");
+    console.log("=======> modal save was clicked with data-id=" + thisId);
 
     // Run a POST request to change the note, using what's entered in the inputs
     $.ajax({
@@ -162,9 +167,7 @@ $(document).on("click", "#savenote", function () {
         url: "/articles/" + thisId,
         data: {
             // Value taken from title input
-            title: $("#titleinput").val(),
-            // Value taken from note textarea
-            body: $("#bodyinput").val()
+            comment: $("#note-text").val(),
         }
     })
         // With that done
@@ -172,10 +175,6 @@ $(document).on("click", "#savenote", function () {
             // Log the response
             console.log(data);
             // Empty the notes section
-            $("#notes").empty();
+            $("#note-text").val("");
         });
-
-    // Also, remove the values entered in the input and textarea for note entry
-    $("#titleinput").val("");
-    $("#bodyinput").val("");
 });

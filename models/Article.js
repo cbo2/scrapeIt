@@ -16,7 +16,6 @@ const ArticleSchema = new Schema({
     unique: true
   },
   // The ref property links these ObjectIds to the Note model
-  // This allows us to populate the Article with any associated notes
   notes: [
     {
       type: Schema.Types.ObjectId,
