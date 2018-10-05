@@ -119,7 +119,15 @@ module.exports = function (app) {
         // Create a new note and pass the req.body to the entry
         db.Note.remove({ _id: req.params.id })
             .then(function (dbNote) {
+                // now that we have removed the note from Note, we need to remove 
+                // the associated note _id from the article array
+                return db.Article.update({},
+                    { $pull: { notes: req.params.id } })
+            })
+            .then(function (dbNote) {
+                console.log("===> Error occurred removed notes from article");
                 res.json(dbNote);
+
             })
             .catch(function (err) {
                 // If an error occurred, send it to the client
