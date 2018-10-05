@@ -54,7 +54,7 @@ $(document).on("click", ".save-article", function () {
 
 });
 
-$(document).on("click", "#saved-articles", showSavedArticles); 
+$(document).on("click", "#saved-articles", showSavedArticles);
 
 // When you click the remove article button
 $(document).on("click", ".article-delete", function () {
@@ -74,12 +74,8 @@ $(document).on("click", ".article-delete", function () {
     })
         // With that done
         .then(function (data) {
-            // Log the response
             console.log(data);
-            // Empty the notes section
-            // $("data-id="+thisId).remove();
             showSavedArticles();
-            // $("#article-area").empty();
         });
 });
 
@@ -110,8 +106,70 @@ function showSavedArticles() {
 
 $(document).on("click", ".article-notes", function () {
     console.log("the button was pressed to enter article notes");
-    $("#note-modal-save").attr("data-id", $(this).attr("data-id"));
+    let articleId = $(this).attr("data-id");
+    $("#note-modal-save").attr("data-id", articleId);
+
+    $("#prior-notes").empty();  // first clear out the prior notes area before populating it
+
+    // Need to get an existing notes up on the #prior-notes div
+    $.ajax({
+        method: "GET",
+        url: "/articlenotes/" + articleId,
+    })
+        // With that done
+        .then(function (data) {
+            // Log the response
+            console.log("back from api call to get article with associated notes: " + JSON.stringify(data));
+            data.notes.map(note => {
+                $("#prior-notes").append(
+                    '<p>' + note.comment +
+                    '<button type="button" class="btn btn-danger btn-sm note-delete archived-notes float-right"' +
+                    ' note-id=' + note._id + ' article-id=' + articleId +
+                    '>Remove Note</button>' +
+                    '</p>'
+                );
+            });
+        });
 });
+
+$(document).on("click", ".note-delete", function () {
+    let thisNoteId = $(this).attr("note-id");
+    let thisArticleId = $(this).attr("article-id");
+    console.log("button clicked to delete a single note with id: " + thisNoteId);
+
+    $.ajax({
+        method: "DELETE",
+        url: "/notes/" + thisNoteId,
+    })
+        // With that done
+        .then(function (data) {
+            console.log(data);
+            showNotes(thisArticleId);
+        });
+});
+
+
+function showNotes(articleId) {
+    $("#prior-notes").empty();  // first clear out the prior notes area before populating it
+    $.ajax({
+        method: "GET",
+        url: "/articlenotes/" + articleId,
+    })
+        // With that done
+        .then(function (data) {
+            // Log the response
+            console.log("back from api call to get article with associated notes: " + JSON.stringify(data));
+            data.notes.map(note => {
+                $("#prior-notes").append(
+                    '<p>' + note.comment +
+                    '<button type="button" class="btn btn-danger btn-sm note-delete archived-notes float-right"' +
+                    ' note-id=' + note._id +
+                    '>Remove Note</button>' +
+                    '</p>'
+                );
+            });
+        });
+}
 
 
 // When you click the savenote button
