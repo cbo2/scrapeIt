@@ -29,19 +29,6 @@ module.exports = function (app) {
                 if (result.title != "" && totalScraped < 20) {  // if we have a null article, move on to the next one
                     scraped.push(result); // add to the array
                     totalScraped++;
-
-                    // Create a new Article using the `result` object built from scraping
-                    // db.Article.create(result)
-                    //     .then(function (dbArticle) {
-                    //         // View the added result in the console
-                    //         console.log(dbArticle);
-                    //     })
-                    //     .catch(function (err) {
-                    //         // Errors, including violating a duplicate (unique constraint violation)
-                    //         // should be logged, but I doubt they should be sent back to the UI.
-                    //         console.log(`ERROR ----> ${err}`);
-                    //         // return res.json(err);
-                    //     });
                 }
             });
 
