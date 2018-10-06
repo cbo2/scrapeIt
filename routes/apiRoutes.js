@@ -104,17 +104,23 @@ module.exports = function (app) {
     // Route for deleting an article
     app.delete("/articles/:id", function (req, res) {
 
-        // TODO - for data integrity, need to cascade removal to Notes
-
-        // Create a new note and pass the req.body to the entry
-        db.Article.remove({ _id: req.params.id })
+        // for data integrity, need to cascade removal to Notes
+        db.Article.findOne({ _id: req.params.id })
             .then(function (dbArticle) {
-                res.json(dbArticle);
+                // grab the full array of _id's from the notes array in Article and delete all Notes
+                return db.Note.deleteMany({ _id: { $in: dbArticle.notes } })
+            .then(function (dbNote) {
+                // Now, remove the article
+                db.Article.remove({ _id: req.params.id })
+                    .then(function (dbArticle) {
+                        res.json(dbArticle);
+                    })
+                    .catch(function (err) {
+                        // If an error occurred, send it to the client
+                        res.json(err);
+                    })
+                })
             })
-            .catch(function (err) {
-                // If an error occurred, send it to the client
-                res.json(err);
-            });
     });
 
     // Route for deleting a note
